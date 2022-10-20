@@ -1,10 +1,6 @@
-# Juicebox Subgraph
+# Cornhub Subgraph
 
 ## Overview
-
-Multiple subgraphs are maintained by [Peel](https://discord.gg/b4rpjgGPHX) in a Graph Studio owned by the [Peel Gnosis safe](https://gnosis-safe.io/app/eth:0x0e9D15e28e3De9bB3CF64FFbC2f2F49Da9Ac545B).
-
-Juicebox mainnet subgraph is published here: https://thegraph.com/explorer/subgraph?id=FVmuv3TndQDNd2BWARV8Y27yuKKukryKXPzvAS5E7htC&view=Overview
 
 Contract addresses and startBlocks are defined in `config/<network>.json`
 

@@ -1,7 +1,7 @@
 {
-  "name": "juicebox-subgraph",
-  "version": "0.1.0",
-  "license": "UNLICENSED",
+  "name": "corn-subgraph",
+  "version": "0.0.1",
+  "license": "MIT",
   "scripts": {
     "codegen": "graph codegen",
     "prep": "node scripts/prepare.js"
