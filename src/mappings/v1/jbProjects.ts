@@ -1,44 +1,47 @@
-import { BigInt } from "@graphprotocol/graph-ts";
-
+import { BigInt, log } from "@graphprotocol/graph-ts";
 import {
   Create,
-  SetHandle,
-  SetUri,
+  SetMetadata,
   Transfer,
-} from "../../../generated/Projects/Projects";
+} from "../../../generated/V3JBProjects/JBProjects";
 import {
   Project,
   ProjectCreateEvent,
   ProtocolLog,
-  ProtocolV1Log,
+  ProtocolV2Log,
 } from "../../../generated/schema";
 import { PROTOCOL_ID } from "../../constants";
-import { ProjectEventKey } from "../../types";
-import { cvForTerminal, cvForV1Project } from "../../utils/cv";
+import { CV, ProjectEventKey } from "../../types";
 import {
   newProtocolLog,
-  newProtocolV1Log,
+  newProtocolV2Log,
   saveNewProjectEvent,
   updateProtocolEntity,
 } from "../../utils/entity";
 import { idForProject, idForProjectTx } from "../../utils/ids";
+import { cvForV2_V3Project } from "../../utils/cv";
 
-export function handleProjectCreate(event: Create): void {
-  const cv = cvForTerminal(event.params.terminal);
+export function handleCreate(event: Create): void {
+  const cv = cvForV2_V3Project(event.params.projectId);
+
   const projectId = idForProject(event.params.projectId, cv);
   const project = new Project(projectId);
-  if (!project) return;
+  if (!project) {
+    log.error("[handleCreate] Missing project. ID:{}", [
+      idForProject(event.params.projectId, cv),
+    ]);
+    return;
+  }
   project.projectId = event.params.projectId.toI32();
   project.cv = cv;
   project.trendingScore = BigInt.fromString("0");
   project.trendingVolume = BigInt.fromString("0");
   project.trendingPaymentsCount = BigInt.fromString("0").toI32();
   project.createdWithinTrendingWindow = true;
-  project.terminal = event.params.terminal;
-  project.handle = event.params.handle.toString();
   project.owner = event.params.owner;
   project.createdAt = event.block.timestamp.toI32();
-  project.metadataUri = event.params.uri;
+  project.metadataUri = event.params.metadata.content;
+  project.metadataDomain = event.params.metadata.domain;
   project.totalPaid = BigInt.fromString("0");
   project.totalRedeemed = BigInt.fromString("0");
   project.currentBalance = BigInt.fromString("0");
@@ -70,38 +73,40 @@ export function handleProjectCreate(event: Create): void {
     protocolLog.save();
   }
 
-  let protocolV1Log = ProtocolV1Log.load(PROTOCOL_ID);
-  if (!protocolV1Log) protocolV1Log = newProtocolV1Log();
-  if (protocolV1Log) {
-    protocolV1Log.projectsCount = protocolV1Log.projectsCount + 1;
-    protocolV1Log.save();
+  let protocolV2Log = ProtocolV2Log.load(PROTOCOL_ID);
+  if (!protocolV2Log) protocolV2Log = newProtocolV2Log();
+  if (protocolV2Log) {
+    // We only need to create log here, since there will only be one entity and it will be created when first project is created.
+    protocolV2Log.projectsCount = protocolV2Log.projectsCount + 1;
+    protocolV2Log.log = PROTOCOL_ID;
+    protocolV2Log.save();
   }
-
   updateProtocolEntity();
 }
 
-export function handleSetHandle(event: SetHandle): void {
-  const cv = cvForV1Project(event.params.projectId);
-  const projectId = idForProject(event.params.projectId, cv);
-  const project = Project.load(projectId);
-  if (!project) return;
-  project.handle = event.params.handle.toString();
-  project.save();
-}
+export function handleSetMetadata(event: SetMetadata): void {
+  const cv = cvForV2_V3Project(event.params.projectId);
 
-export function handleSetUri(event: SetUri): void {
-  const cv = cvForV1Project(event.params.projectId);
-  const projectId = idForProject(event.params.projectId, cv);
-  const project = Project.load(projectId);
-  if (!project) return;
-  project.metadataUri = event.params.uri;
+  const project = Project.load(idForProject(event.params.projectId, cv));
+  if (!project) {
+    log.error("[handleSetMetadata] Missing project. ID:{}", [
+      idForProject(event.params.projectId, cv),
+    ]);
+    return;
+  }
+  project.metadataUri = event.params.metadata.content;
+  project.metadataDomain = event.params.metadata.domain;
   project.save();
 }
 
 export function handleTransferOwnership(event: Transfer): void {
-  const cv = cvForV1Project(event.params.tokenId);
+  const cv = cvForV2_V3Project(event.params.tokenId);
+
   const project = Project.load(idForProject(event.params.tokenId, cv));
-  if (!project) return;
+  if (!project) {
+    // Project will be missing on initial mint transfer
+    return;
+  }
   project.owner = event.params.to;
   project.save();
 }

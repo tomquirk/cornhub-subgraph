@@ -4,7 +4,7 @@ const jsyaml = require("js-yaml");
 const mustache = require("mustache");
 const graph = require("@graphprotocol/graph-cli/src/cli");
 
-const PREFIXES = ["v1", "v2", "v3", "shared"];
+const PREFIXES = ["v1"];
 
 const network = process.argv.slice(2)[0];
 
@@ -75,6 +75,8 @@ function writeSubgraph() {
       .render(fs.readFileSync(`${p}.template.yaml`).toString(), config)
       .toString();
   }
+
+  console.log(config)
 
   // Write new subgraph.yaml
   try {

@@ -1,0 +1,16 @@
+{
+  "network": "bsc",
+  "v1": {
+    "address_jbProjects": "0x43CB8FCe4F0d61579044342A5d5A027aB7aE4D63",
+    "startBlock_jbProjects": 23867698,
+    "address_jbController": "0xFFdD70C318915879d5192e8a0dcbFcB0285b3C98",
+    "startBlock_jbController": 15575460,
+    "address_jbTokenStore": "0x6FA996581D7edaABE62C15eaE19fEeD4F1DdDfE7",
+    "startBlock_jbTokenStore": 15575457,
+    "address_jbETHPaymentTerminal": "0x594Cb208b5BB48db1bcbC9354d1694998864ec63",
+    "startBlock_jbETHPaymentTerminal": 15575464,
+    "address_jbETHERC20ProjectPayerDeployer": "0x144F5F5Fdbe0fC8d4A758f33Bf14F68bdFe6feBD",
+    "startBlock_jbETHERC20ProjectPayerDeployer": 15575452,
+    "address_jbDirectory": "0x65572FB928b46f9aDB7cfe5A4c41226F636161ea"
+  }
+}

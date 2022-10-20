@@ -1,5 +1,4 @@
 import { Address, BigInt, Bytes, ethereum, log } from "@graphprotocol/graph-ts";
-import { JBProjectHandles } from "../../generated/JBProjectHandles/JBProjectHandles";
 import {
   Participant,
   Project,
@@ -10,7 +9,6 @@ import {
   ProtocolV3Log,
 } from "../../generated/schema";
 import { PROTOCOL_ID } from "../constants";
-import { address_shared_jbProjectHandles } from "../contractAddresses";
 import { CV, ProjectEventKey } from "../types";
 import { idForParticipant, idForProject, idForProjectEvent } from "./ids";
 

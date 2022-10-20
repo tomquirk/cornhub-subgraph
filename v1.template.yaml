@@ -1,12 +1,12 @@
 {{ #v1 }}
-  {{ #v1.address_projects }}
+ {{ #v1.address_jbProjects }}
   - kind: ethereum/contract
-    name: Projects
+    name: V3JBProjects
     network: {{network}}
     source:
-      address: '{{v1.address_projects}}'
-      abi: Projects
-      startBlock: {{v1.startBlock_projects}}
+      address: '{{v1.address_jbProjects}}'
+      abi: JBProjects
+      startBlock: {{v1.startBlock_jbProjects}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -14,32 +14,85 @@
       entities:
         - Project
         - ProjectCreateEvent
-        - ProtocolLog
-        - ProtocolV1Log
+        - ProjectEvent
+        - ProtocolV2Log
       abis:
-        - name: Projects
-          file: ./abis/v1/Projects.json
-        - name: TerminalDirectory
-          file: ./abis/v1/TerminalDirectory.json
+        - name: JBProjects
+          file: ./abis/v1/JBProjects.json
+        - name: V3JBDirectory
+          file: ./abis/v1/JBDirectory.json
       eventHandlers:
-        - event: Create(indexed uint256,indexed address,indexed bytes32,string,address,address)
-          handler: handleProjectCreate
-        - event: SetHandle(indexed uint256,indexed bytes32,address)
-          handler: handleSetHandle
-        - event: SetUri(indexed uint256,string,address)
-          handler: handleSetUri
+        - event: Create(indexed uint256,indexed address,(string,uint256),address)
+          handler: handleCreate
         - event: Transfer(indexed address,indexed address,indexed uint256)
           handler: handleTransferOwnership
-      file: ./src/mappings/v1.x/projects.ts
-  {{ /v1.address_projects }}
-  {{ #v1.address_ticketBooth }}
+        - event: SetMetadata(indexed uint256,(string,uint256),address)
+          handler: handleSetMetadata
+      file: ./src/mappings/v1/jbProjects.ts
+  {{ /v1.address_jbProjects }}
+  {{ #v1.address_jbETHERC20ProjectPayerDeployer }}
   - kind: ethereum/contract
-    name: TicketBooth
+    name: V3JBETHERC20ProjectPayerDeployer
     network: {{network}}
     source:
-      address: '{{v1.address_ticketBooth}}'
-      abi: TicketBooth
-      startBlock: {{v1.startBlock_ticketBooth}}
+      address: '{{v1.address_jbETHERC20ProjectPayerDeployer}}'
+      abi: JBETHERC20ProjectPayerDeployer
+      startBlock: {{v1.startBlock_jbETHERC20ProjectPayerDeployer}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - ETHERC20ProjectPayer
+        - DeployETHERC20ProjectPayerEvent
+      abis:
+        - name: JBETHERC20ProjectPayerDeployer
+          file: ./abis/v1/JBETHERC20ProjectPayerDeployer.json
+        - name: JBETHERC20ProjectPayer
+          file: ./abis/shared/JBETHERC20ProjectPayer.json
+      eventHandlers:
+        - event: DeployProjectPayer(indexed address,uint256,address,bool,string,bytes,bool,address,address,address)
+          handler: handleDeployProjectPayer
+      file: ./src/mappings/v1/jbETHERC20ProjectPayerDeployer.ts
+  {{ /v1.address_jbETHERC20ProjectPayerDeployer }}
+  {{ #v1.address_jbController }}
+  - kind: ethereum/contract
+    name: V3JBController
+    network: {{network}}
+    source:
+      address: '{{v1.address_jbController}}'
+      abi: JBController
+      startBlock: {{v1.startBlock_jbController}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - DistributeReservedTokensEvent
+        - DistributeToReservedTokenSplitEvent
+        - MintTokensEvent
+      abis:
+        - name: JBController
+          file: ./abis/v1/JBController.json
+        - name: V3JBDirectory
+          file: ./abis/v1/JBDirectory.json
+      eventHandlers:
+        - event: MintTokens(indexed address,indexed uint256,uint256,uint256,string,uint256,address)
+          handler: handleMintTokens
+        - event: DistributeReservedTokens(indexed uint256,indexed uint256,indexed uint256,address,uint256,uint256,string,address)
+          handler: handleDistributeReservedTokens
+        - event: DistributeToReservedTokenSplit(indexed uint256,indexed uint256,indexed uint256,(bool,bool,uint256,uint256,address,uint256,address),uint256,address)
+          handler: handleDistributeToReservedTokenSplit
+      file: ./src/mappings/v1/jbController.ts
+  {{ /v1.address_jbController }}
+  {{ #v1.address_jbTokenStore }}
+  - kind: ethereum/contract
+    name: V3JBTokenStore
+    network: {{network}}
+    source:
+      address: '{{v1.address_jbTokenStore}}'
+      abi: JBTokenStore
+      startBlock: {{v1.startBlock_jbTokenStore}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -48,123 +101,67 @@
         - DeployedERC20Event
         - Participant
         - Project
-        - ProtocolV1Log
+        - ProjectEvent
+        - ProtocolV3Log
       abis:
-        - name: TicketBooth
-          file: ./abis/v1/TicketBooth.json
-        - name: TerminalDirectory
-          file: ./abis/v1/TerminalDirectory.json
+        - name: JBTokenStore
+          file: ./abis/v1/JBTokenStore.json
+        - name: V3JBDirectory
+          file: ./abis/v1/JBDirectory.json
       eventHandlers:
-        - event: Print(indexed address,indexed uint256,uint256,bool,bool,address)
-          handler: handlePrint
-        - event: Transfer(indexed address,indexed uint256,indexed address,uint256,address)
-          handler: handleTicketTransfer
-        - event: Unstake(indexed address,indexed uint256,uint256,address)
-          handler: handleUnstake
-        - event: Stake(indexed address,indexed uint256,uint256,address)
-          handler: handleStake
-        - event: Redeem(indexed address,indexed uint256,uint256,uint256,bool,address)
-          handler: handleRedeem
-        - event: Issue(indexed uint256,string,string,address)
+        - event: Burn(indexed address,indexed uint256,uint256,uint256,uint256,bool,address)
+          handler: handleBurn
+        - event: Claim(indexed address,indexed uint256,uint256,uint256,address)
+          handler: handleClaim
+        - event: Issue(indexed uint256,indexed address,string,string,address)
           handler: handleIssue
-      file: ./src/mappings/v1.x/ticketBooth.ts
-  {{ /v1.address_ticketBooth }}
-  {{ #v1.address_terminalV1 }}
+        - event: Mint(indexed address,indexed uint256,uint256,bool,bool,address)
+          handler: handleMint
+        - event: Transfer(indexed address,indexed uint256,indexed address,uint256,address)
+          handler: handleTransfer
+      file: ./src/mappings/v1/jbTokenStore.ts
+  {{ /v1.address_jbTokenStore }}
+  {{ #v1.address_jbETHPaymentTerminal }}
   - kind: ethereum/contract
-    name: TerminalV1
+    name: V3JBETHPaymentTerminal
     network: {{network}}
     source:
-      address: '{{v1.address_terminalV1}}'
-      abi: TerminalV1
-      startBlock: {{v1.startBlock_terminalV1}}
+      address: '{{v1.address_jbETHPaymentTerminal}}'
+      abi: JBETHPaymentTerminal
+      startBlock: {{v1.startBlock_jbETHPaymentTerminal}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
-        - DistributeToPayoutModEvent
-        - DistributeToTicketModEvent
-        - MintTokensEvent
+        - DistributePayoutsEvent
+        - DistributeToPayoutSplitEvent
         - Participant
         - PayEvent
-        - PrintReservesEvent
         - Project
-        - ProjectEvent
-        - ProtocolV1Log
+        - ProtocolV3Log
         - RedeemEvent
-        - TapEvent
+        - UseAllowanceEvent
       abis:
-        - name: TerminalV1
-          file: ./abis/v1/TerminalV1.json
-        - name: TerminalDirectory
-          file: ./abis/v1/TerminalDirectory.json
+        - name: JBETHPaymentTerminal
+          file: ./abis/v1/JBETHPaymentTerminal.json
+        - name: V3JBDirectory
+          file: ./abis/v1/JBDirectory.json
       eventHandlers:
-        - event: Pay(indexed uint256,indexed uint256,indexed address,uint256,string,address)
+        - event: Pay(indexed uint256,indexed uint256,indexed uint256,address,address,uint256,uint256,string,bytes,address)
           handler: handlePay
-        - event: PrintPreminedTickets(indexed uint256,indexed address,uint256,uint256,string,address)
-          handler: handlePrintPreminedTickets
-        - event: PrintReserveTickets(indexed uint256,indexed uint256,indexed address,uint256,uint256,address)
-          handler: handlePrintReserveTickets
-        - event: Tap(indexed uint256,indexed uint256,indexed address,uint256,uint256,uint256,uint256,uint256,address)
-          handler: handleTap
-        - event: Redeem(indexed address,indexed address,indexed uint256,uint256,uint256,address)
-          handler: handleRedeem
-        - event: AddToBalance(indexed uint256,uint256,address)
+        - event: RedeemTokens(indexed uint256,indexed uint256,indexed uint256,address,address,uint256,uint256,string,bytes,address)
+          handler: handleRedeemTokens
+        - event: AddToBalance(indexed uint256,uint256,uint256,string,bytes,address)
           handler: handleAddToBalance
-        - event: DistributeToPayoutMod(indexed uint256,indexed uint256,(bool,uint16,uint48,address,address,uint56),uint256,address)
-          handler: handleDistributeToPayoutMod
-        - event: DistributeToTicketMod(indexed uint256,indexed uint256,(bool,uint16,uint48,address),uint256,address)
-          handler: handleDistributeToTicketMod
-        - event: Migrate(indexed uint256,indexed address,uint256,address)
-          handler: handleMigrate
-      file: ./src/mappings/v1.x/terminalV1.ts
-  {{ /v1.address_terminalV1 }}
-  {{ #v1.address_terminalV1_1 }}
-  - kind: ethereum/contract
-    name: TerminalV1_1
-    network: {{network}}
-    source:
-      address: '{{v1.address_terminalV1_1}}'
-      abi: TerminalV1_1
-      startBlock: {{v1.startBlock_terminalV1_1}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.6
-      language: wasm/assemblyscript
-      entities:
-        - DistributeToPayoutModEvent
-        - DistributeToTicketModEvent
-        - Participant
-        - PayEvent
-        - MintTokensEvent
-        - PrintReservesEvent
-        - Project
-        - ProjectEvent
-        - ProtocolV1Log
-        - RedeemEvent
-        - TapEvent
-      abis:
-        - name: TerminalV1_1
-          file: ./abis/v1/TerminalV1_1.json
-        - name: TerminalDirectory
-          file: ./abis/v1/TerminalDirectory.json
-      eventHandlers:
-        - event: Pay(indexed uint256,indexed uint256,indexed address,uint256,uint256,uint256,string,address)
-          handler: handlePay
-        - event: PrintTickets(indexed uint256,indexed address,uint256,string,address)
-          handler: handlePrintTickets
-        - event: PrintReserveTickets(indexed uint256,indexed uint256,indexed address,uint256,uint256,address)
-          handler: handlePrintReserveTickets
-        - event: Tap(indexed uint256,indexed uint256,indexed address,uint256,uint256,uint256,uint256,uint256,address)
-          handler: handleTap
-        - event: Redeem(indexed address,indexed address,indexed uint256,uint256,uint256,address)
-          handler: handleRedeem
-        - event: AddToBalance(indexed uint256,uint256,address)
-          handler: handleAddToBalance
-        - event: DistributeToPayoutMod(indexed uint256,indexed uint256,(bool,uint16,uint48,address,address,uint56),uint256,address)
-          handler: handleDistributeToPayoutMod
-        - event: DistributeToTicketMod(indexed uint256,indexed uint256,(bool,uint16,uint48,address),uint256,address)
-          handler: handleDistributeToTicketMod
-      file: ./src/mappings/v1.x/terminalV1_1.ts
-  {{ /v1.address_terminalV1_1 }}
+        - event: DistributePayouts(indexed uint256,indexed uint256,indexed uint256,address,uint256,uint256,uint256,uint256,string,address)
+          handler: handleDistributePayouts
+        - event: UseAllowance(indexed uint256,indexed uint256,indexed uint256,address,uint256,uint256,uint256,string,address)
+          handler: handleUseAllowance
+        - event: DistributeToPayoutSplit(indexed uint256,indexed uint256,indexed uint256,(bool,bool,uint256,uint256,address,uint256,address),uint256,address)
+          handler: handleDistributeToPayoutSplit
+        - event: ProcessFee(indexed uint256,indexed uint256,indexed bool,address,address)
+          handler: handleProcessFee
+      file: ./src/mappings/v1/jbETHPaymentTerminal.ts
+  {{ /v1.address_jbETHPaymentTerminal }}
 {{ /v1 }}

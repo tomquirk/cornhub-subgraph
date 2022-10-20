@@ -39,7 +39,7 @@ The `prepare.js` script also performs a safety check for mismatches between the 
 To deploy a new subgraph version, first prepare the subgraph for the intended network:
 
 ```bash
-yarn prep <network-name> # mainnet, goerli
+yarn prep <network-name> # bsc
 ```
 
 - Generates TS types for the schema defined in `schema.graphql`

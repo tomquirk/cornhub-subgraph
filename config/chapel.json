@@ -1,0 +1,16 @@
+{
+  "network": "chapel",
+  "v1": {
+    "address_jbProjects": "0x43CB8FCe4F0d61579044342A5d5A027aB7aE4D63",
+    "startBlock_jbProjects": 23867698,
+    "address_jbController": "0xFFdD70C318915879d5192e8a0dcbFcB0285b3C98",
+    "startBlock_jbController": 23867708,
+    "address_jbTokenStore": "0x25fdda0eBD9e979b8c1657780045Cf87392a14E4",
+    "startBlock_jbTokenStore": 23867704,
+    "address_jbETHPaymentTerminal": "0x8B32634Bbfd82a3b3cC0da109090ED2AD7F07Da5",
+    "startBlock_jbETHPaymentTerminal": 23867714,
+    "address_jbETHERC20ProjectPayerDeployer": "0xb657f1BCf733f96c2AA47b9d5ef95Ef012267A81",
+    "startBlock_jbETHERC20ProjectPayerDeployer": 23867689,
+    "address_jbDirectory": "0x3B3Bd16cc76cd53218e00b600bFCa27aA5057794"
+  }
+}
