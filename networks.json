@@ -1,0 +1,24 @@
+{
+  "chapel": {
+    "V3JBController": {
+      "address": "0xFFdD70C318915879d5192e8a0dcbFcB0285b3C98",
+      "startBlock": 15575460
+    },
+    "V3JBETHERC20ProjectPayerDeployer": {
+      "address": "0x144F5F5Fdbe0fC8d4A758f33Bf14F68bdFe6feBD",
+      "startBlock": 15575452
+    },
+    "V3JBETHPaymentTerminal": {
+      "address": "0x594Cb208b5BB48db1bcbC9354d1694998864ec63",
+      "startBlock": 15575464
+    },
+    "V3JBProjects": {
+      "address": "0x43CB8FCe4F0d61579044342A5d5A027aB7aE4D63",
+      "startBlock": 23867698
+    },
+    "V3JBTokenStore": {
+      "address": "0x6FA996581D7edaABE62C15eaE19fEeD4F1DdDfE7",
+      "startBlock": 15575457
+    }
+  }
+}

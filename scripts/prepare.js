@@ -76,8 +76,6 @@ function writeSubgraph() {
       .toString();
   }
 
-  console.log(config)
-
   // Write new subgraph.yaml
   try {
     fs.writeFileSync(
